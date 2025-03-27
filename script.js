@@ -8,26 +8,29 @@ const rowData = [
 
 const table = document.getElementById('myTable');
 
-function createDropdown(row, data) {
+function createDropdown(row, data, rowIndex) {
     const imageMap = {
         1: 'img/cld.png',
         2: 'img/cld.png',
         3: 'img/cld.png',
-		4: 'img/clc.png',
-		5: 'img/clc.png',
-		6: 'img/clc.png',
-		7: 'img/clb.png',
-		8: 'img/clb.png',
-		9: 'img/clb.png',
-		10: 'img/cla.png',
-		11: 'img/cla.png',
-		12: 'img/cla.png',
-		13: 'img/cls.png',
-		14: 'img/cls.png',
+        4: 'img/clc.png',
+        5: 'img/clc.png',
+        6: 'img/clc.png',
+        7: 'img/clb.png',
+        8: 'img/clb.png',
+        9: 'img/clb.png',
+        10: 'img/cla.png',
+        11: 'img/cla.png',
+        12: 'img/cla.png',
+        13: 'img/cls.png',
+        14: 'img/cls.png',
         15: 'img/cls.png'
     };
 
     const select = document.createElement('select');
+    const hiddenTopValueInput = document.createElement('input');
+    hiddenTopValueInput.type = 'hidden';
+    hiddenTopValueInput.className = 'hidden-top-value';
 
     for (let i = 1; i <= 15; i++) {
         const option = document.createElement('option');
@@ -37,15 +40,26 @@ function createDropdown(row, data) {
     }
     
     select.addEventListener('change', function() {
-        updateTopValue(row, this.value, data.topValues);
+        const value = this.value;
+        const topValue = data.topValues[value];
+        hiddenTopValueInput.value = topValue;
+        
+        // Special handling for Block [BL]
+        if (rowIndex === 2) {
+            // Set Top Clone Value directly without % sign
+            row.cells[3].textContent = topValue.replace('%', '');
+            row.cells[2].textContent = ' - ';
+        } else {
+            calculateTopCloneValue(row);
+        }
     });
 
-    return select;
-}
+    // Create a container to hold both select and hidden input
+    const container = document.createElement('div');
+    container.appendChild(select);
+    container.appendChild(hiddenTopValueInput);
 
-function updateTopValue(row, value, topValues) {
-    row.cells[2].textContent = topValues[value];
-    checkTopStatus(row);
+    return container;
 }
 
 function createNumberInput(row, columnIndex, rowIndex) {
@@ -53,9 +67,10 @@ function createNumberInput(row, columnIndex, rowIndex) {
     input.type = 'text';
     input.maxLength = 7;
 
-    if (columnIndex === 3 && rowIndex === 2) {
+    // For Block [BL], disable input and set placeholder
+    if (rowIndex === 2) {
         input.disabled = true;
-        input.value = 'ไม่ต้องดูค่านี้';
+        input.value = ' - ';
         input.style.backgroundColor = '#f0f0f0';
         input.style.color = '#888';
     } else {
@@ -68,64 +83,52 @@ function createNumberInput(row, columnIndex, rowIndex) {
             if (e.target.value.length > 7) {
                 e.target.value = e.target.value.slice(0, 7);
             }
-            calculatePercentage(row, rowIndex);
+            calculateTopCloneValue(row);
         });
     }
 
     return input;
 }
 
-function calculatePercentage(row, rowIndex) {
-    const cloneValue = row.cells[3].querySelector('input').value;
-    const initialValue = row.cells[4].querySelector('input').value;
-    const percentageCell = row.cells[5];
+function calculateTopCloneValue(row) {
+    // Find the hidden top value input
+    const hiddenTopValueInput = row.querySelector('.hidden-top-value');
+    const initialValueInput = row.cells[2].querySelector('input');
+    const topCloneValueCell = row.cells[3];
 
-    if (rowIndex === 2) { // แถวที่ 3 (index 2)
-        percentageCell.textContent = initialValue ? initialValue + '%' : 'กรุณาใส่ค่า';
-    } else if (cloneValue && initialValue) {
-        const percentage = (cloneValue / initialValue) * 100;
-        percentageCell.textContent = Math.round(percentage) + '%';
-    } else {
-        percentageCell.textContent = 'กรุณาใส่ค่า';
-    }
-    checkTopStatus(row);
-}
+    if (hiddenTopValueInput && initialValueInput) {
+        const topValue = hiddenTopValueInput.value.replace('%', '');
+        const initialValue = initialValueInput.value;
 
-function checkTopStatus(row) {
-    const topValue = row.cells[2].textContent;
-    const currentPercentage = row.cells[5].textContent;
-    const statusCell = row.cells[6];
-
-    if (topValue && currentPercentage && currentPercentage !== 'กรุณาใส่ค่า') {
-        if (topValue === currentPercentage) {
-            statusCell.textContent = 'TOP';
-            statusCell.className = 'top';
+        if (initialValue && topValue) {
+            const topCloneValue = (parseFloat(initialValue) * parseFloat(topValue) / 100);
+            // ปัดเศษให้เป็นเลขกลม ๆ โดยใช้ Math.round()
+            topCloneValueCell.textContent = Math.round(topCloneValue);
         } else {
-            statusCell.textContent = 'ยังไม่ TOP';
-            statusCell.className = 'not-top';
+            topCloneValueCell.textContent = '';
         }
-    } else {
-        statusCell.textContent = '';
-        statusCell.className = '';
     }
 }
 
 rowData.forEach(function(data, rowIndex) {
     const row = table.insertRow();
-    for (let j = 0; j < 7; j++) {
+    for (let j = 0; j < 4; j++) {
         const cell = row.insertCell();
         if (j === 0) {
             cell.textContent = data.status;
         } else if (j === 1) {
-            cell.appendChild(createDropdown(row, data));
-        } else if (j === 3 || j === 4) {
+            cell.appendChild(createDropdown(row, data, rowIndex));
+        } else if (j === 2) {
             cell.appendChild(createNumberInput(row, j, rowIndex));
-        } else if (j === 5) {
-            cell.textContent = 'กรุณาใส่ค่า';
         }
     }
-    updateTopValue(row, 1, data.topValues);
-    calculatePercentage(row, rowIndex); // เพิ่มบรรทัดนี้
+
+    // For Block [BL], set default values
+    if (rowIndex === 2) {
+        const dropdown = row.cells[1].querySelector('select');
+        dropdown.selectedIndex = 0;
+        dropdown.dispatchEvent(new Event('change'));
+    }
 });
 
 // เพิ่มหลังจากโค้ด JavaScript ที่มีอยู่
