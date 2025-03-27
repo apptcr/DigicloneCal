@@ -11,7 +11,7 @@ body {
     font-family: Prompt, sans-serif;
 }
 table {
-    background-color: #ffffff; /* เปลี่ยนเป็นสีขาวทึบ */
+    background-color: #ffffff;
 	width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -21,7 +21,7 @@ table {
 }
 th, td {
     padding: 12px 15px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
@@ -64,21 +64,6 @@ select, input[type="text"] {
     box-sizing: border-box;
 }
 
-select, input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.top {
-    color: green;
-    font-weight: bold;
-}
-.not-top {
-    color: red;
-    font-weight: bold;
-}
 .container {
     text-align: center;
     margin: 0 auto;
@@ -86,10 +71,6 @@ select, input[type="text"] {
 .container img {
     display: block;
     margin: 0 auto;
-}
-.container th, .container td {
-    padding: 10px;
-    text-align: center;
 }
 
 video#background-video {
@@ -99,10 +80,6 @@ video#background-video {
   min-width: 100%;
   min-height: 100%;
   z-index: -1;
-}
-
-div.box {
-  background-color: rgba(255, 255, 255, 0.6);
 }
 
 @media screen and (max-width: 600px) {
@@ -115,10 +92,10 @@ div.box {
     }
 }
 
-  .logo-animation {
+.logo-animation {
     height: 300px;
     animation: pulse 2s infinite ease-in-out;
-  }
+}
 
 @keyframes pulse {
   0% {
@@ -132,25 +109,14 @@ div.box {
   }
 }
 
-.dropdown-image-container {
-    display: inline-block;
-    margin-left: 5px;
-    vertical-align: middle;
-}
-.dropdown-image {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-}
-
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    padding: 5px 25px 5px 5px; /* เพิ่ม padding ด้านซ้ายและขวา */
+    padding: 5px 25px 5px 5px;
     background-color: white;
-    text-align: center; /* จัดตัวเลขให้อยู่ตรงกลาง */
-    text-align-last: center; /* สำหรับ Firefox */
+    text-align: center;
+    text-align-last: center;
 }
 
 .option-image {
@@ -164,24 +130,21 @@ select {
     transform: translateY(-50%);
 }
 
-/* สำหรับ Firefox */
 select:-moz-focusring {
     color: transparent;
     text-shadow: 0 0 0 #000;
 }
 
-/* สำหรับ IE10+ */
 select::-ms-expand {
     display: none;
 }
 
-/* สไตล์สำหรับตัวเลือกที่มีรูปภาพ */
 select option {
     display: flex;
     align-items: center;
-    justify-content: center; /* จัดตัวเลขให้อยู่ตรงกลาง */
-    padding: 5px 25px 5px 5px; /* เพิ่ม padding ด้านขวาสำหรับรูปภาพ */
-    position: relative; /* สำหรับการจัดตำแหน่งรูปภาพ */
+    justify-content: center;
+    padding: 5px 25px 5px 5px;
+    position: relative;
 }
 
 #myTable td, #myTable th {
