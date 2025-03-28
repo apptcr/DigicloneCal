@@ -138,6 +138,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedOption = select.options[select.selectedIndex];
         updateSelectImage(select, selectedOption);
 
+        // Trigger change event to calculate initial values
+        select.dispatchEvent(new Event('change'));
+
         select.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             updateSelectImage(this, selectedOption);
