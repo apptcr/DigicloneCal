@@ -35,7 +35,9 @@ function createDropdown(row, data, rowIndex) {
     for (let i = 1; i <= 15; i++) {
         const option = document.createElement('option');
         option.value = i;
-        option.innerHTML = `${i}<img src="${imageMap[i]}" alt="${i}" class="option-image">`;
+        
+        // แสดงรูปใน option เมื่อกด dropdown
+        option.innerHTML = `${i} <img src="${imageMap[i]}" alt="${i}" class="option-image">`;
         select.appendChild(option);
     }
     
@@ -102,8 +104,18 @@ function calculateTopCloneValue(row) {
 
         if (initialValue && topValue) {
             const topCloneValue = (parseFloat(initialValue) * parseFloat(topValue) / 100);
-            // ปัดเศษให้เป็นเลขกลม ๆ โดยใช้ Math.round()
-            topCloneValueCell.textContent = Math.round(topCloneValue);
+            
+            // แสดงผลเป็นช่วงค่าเต็มที่ใกล้เคียง
+            const lowerBound = Math.floor(topCloneValue);
+            const upperBound = Math.ceil(topCloneValue);
+            
+            // ถ้าค่าเป็นจำนวนเต็มอยู่แล้ว ให้แสดงค่าเดียวโดยไม่มีคำว่า "ประมาณ"
+            if (lowerBound === upperBound) {
+                topCloneValueCell.textContent = lowerBound;
+            } else {
+                // ถ้าไม่ใช่จำนวนเต็ม ให้แสดงค่าในรูปแบบ "ประมาณ ค่าต่ำ-ค่าสูง"
+                topCloneValueCell.textContent = `ประมาณ ${lowerBound}-${upperBound}`;
+            }
         } else {
             topCloneValueCell.textContent = '';
         }
@@ -146,6 +158,24 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSelectImage(this, selectedOption);
         });
     });
+    
+    // เพิ่ม CSS เพื่อให้รูปใน dropdown แสดงผลถูกต้อง
+    const style = document.createElement('style');
+    style.textContent = `
+        select option {
+            display: flex !important;
+            align-items: center !important;
+            padding: 5px !important;
+        }
+        .option-image {
+            display: inline-block !important;
+            width: 20px !important;
+            height: 20px !important;
+            margin-left: 5px !important;
+            vertical-align: middle !important;
+        }
+    `;
+    document.head.appendChild(style);
 });
 
 function updateSelectImage(select, option) {
